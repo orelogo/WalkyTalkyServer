@@ -27,10 +27,10 @@ router.get('/', function (req, res) {
           finish();
       }
 
-      client.query('SELECT * FROM points WHERE tour_id = ' + id);
+      var query = client.query('SELECT * FROM points WHERE tour_id = ' + id);
       query.on('end', function (result) {
         res.setHeader('Content-Type', 'application/json');
-        res.send(JSON.stringify(result));
+        res.send(JSON.stringify(result['rows']));
       });
   });
 });
