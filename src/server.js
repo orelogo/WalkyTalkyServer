@@ -45,32 +45,32 @@ function createTables(config) {
       function (next) {
         // Create the "tours" table.
         client.query("CREATE TABLE IF NOT EXISTS tours (" +
-          "tourId SERIAL, " +
+          "tour_id SERIAL PRIMARY KEY, " +
           "name STRING, " +
-          "description STRING" +
-          "author STRING" +
-          "date DATE" +
-          "city STRING" +
-          "category STRING" +
-          "rating INT(1, 5)" +
-          "imageUrl STRING" +
-          "audioIntroUrl STRING" +
+          "description STRING," +
+          "author STRING," +
+          "date DATE," +
+          "city STRING," +
+          "category STRING," +
+          "rating INT(1, 5)," +
+          "image_url STRING," +
+          "audio_intro_url STRING" +
         ");", next);
       },
       function (next) {
         // Create the "points" table.
         client.query("CREATE TABLE IF NOT EXISTS points (" +
-          "pointId INT PRIMARY KEY, " +
-          "tourId INT" +
+          "point_id SERIAL PRIMARY KEY, " +
+          "tour_id INT REFERENCES tours (tour_id)," +
           "name STRING, " +
-          "address STRING" +
-          "lat DOUBLE" +
-          "lon DOUBLE" +
-          "orderInTour INT" +
-          "audioUrl STRING" +
-          "imageUrl STRING" +
-          "categories STRING" +
-          "yelpRating INT" +
+          "address STRING," +
+          "lat DOUBLE," +
+          "lon DOUBLE," +
+          "order_in_tour INT," +
+          "audio_url STRING," +
+          "image_url STRING," +
+          "categories STRING," +
+          "yelp_rating INT" +
         ");", next);
       },
       // function (next) {
@@ -88,7 +88,7 @@ function createTables(config) {
         finish();
       }
 
-      console.log('Initial balances, not sure what this does:');
+      console.log('Results:');
       results.rows.forEach(function (row) {
         console.log(row);
       });
