@@ -27,27 +27,12 @@ router.get('/', function (req, res) {
         var rows = [];
         query.on('row', function (row, result) {
             result.addRow(row);
-            console.log(rows);
         })
         query.on('end', function (result) {
-            console.log('done');
-            console.log(result['rows']);
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify(result['rows']));
         })
     })
-
-
-
-
-
-
-
-  /*res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify([
-    { tour: 1 },
-    { tour: 2 }
-  ]));*/
 });
 
 module.exports = router;

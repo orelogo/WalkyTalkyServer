@@ -1,10 +1,11 @@
 var express = require('express');
 var router = express.Router();
+var pg = require('pg');
 
 
 /* GET home page. */
 router.get('/', function (req, res) {
-  var tourId = req.query.tourid;
+  var id = req.query.tourid;
 
   var config = {
     user: 'walkytalky',
