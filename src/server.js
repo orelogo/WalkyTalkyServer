@@ -23,10 +23,6 @@ var tour = require('./routes/tour');
 app.use('/all-tours', allTours);
 app.use('/tour', tour);
 
-app.get('/', function (req, res) {
-  res.send('Hello World!');
-});
-
 app.listen(port);
 console.log('server on');
 
@@ -114,6 +110,10 @@ yelp.search({ term: 'museum', location: 'Vancouver' })
         console.error(err);
     })
 
+
+app.get('/', function (req, res) {
+    res.send(getFullTourID(1));
+});
 
 getFullTourID(1);
 setFoodAudio();
