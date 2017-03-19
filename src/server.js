@@ -1,6 +1,17 @@
 var express = require('express');
 var async = require('async');
 var pg = require('pg');
+var Yelp = require('yelp');
+
+// Request YelpAPI token
+
+var yelp = new Yelp({
+    consumer_key: '	EVsKNcmCUWj5Xt8i7MR4cA',
+    consumer_secret: 'nXsNJDK6Eo3kBpSf71qFcLL0tkg',
+    token: 'HnOE4x0VStnWUlZznzRU1AGEdYt720N3',
+    token_secret: '	TStrgr3wy4W-rFZ7ozQjMRCUsJM',
+});
+
 
 var app = express();
 var port = 8000;
@@ -27,6 +38,18 @@ var config = {
 };
 
 createTables(config);
+loadData();
+
+
+function loadData(){
+    app.post('https://api.yelp.com/v3/businesses/search', function(req, res, next){
+
+
+        next();
+    })
+
+
+}
 
 function createTables(config) {
 
@@ -73,6 +96,7 @@ function createTables(config) {
           "yelp_rating INT" +
         ");", next);
       },
+
       // function (next) {
       //   // Insert two rows into the "accounts" table.
       //   client.query("INSERT INTO tours (id, balance) VALUES (1, 1000), (2, 250);", next);
