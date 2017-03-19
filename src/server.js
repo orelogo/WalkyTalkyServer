@@ -98,8 +98,15 @@ yelp.search({ term: 'museum', location: 'Vancouver' })
                         pointID++;
                         orderNum++;
                     });
+                    next();
 
-                }])
+                },
+                function(next){
+                    setFoodAudio();
+                    next();
+
+
+            }])
 
         })
     })
@@ -109,9 +116,53 @@ yelp.search({ term: 'museum', location: 'Vancouver' })
 
 
 getFullTourID(1);
+setFoodAudio();
 
 
+function setFoodAudio(){
+    pg.connect(config, function (err, client, done) {
 
+        var finish = function () {
+            done();
+            process.exit();
+        };
+
+        if (err) {
+            console.error('could not connect to cockroachdb', err);
+            finish();
+        }
+
+        async.waterfall([
+            function (next) {
+                client.query("UPDATE points SET audio_url = './directory/1.mp3' WHERE point_id = 1");
+                client.query("UPDATE points SET audio_url = './directory/2.mp3' WHERE point_id = 2");
+                client.query("UPDATE points SET audio_url = './directory/3.mp3' WHERE point_id = 3");
+                client.query("UPDATE points SET audio_url = './directory/4.mp3' WHERE point_id = 4");
+                client.query("UPDATE points SET audio_url = './directory/5.mp3' WHERE point_id = 5");
+
+                client.query("UPDATE points SET audio_url = './directory/6.mp3' WHERE point_id = 6");
+                client.query("UPDATE points SET audio_url = './directory/7.mp3' WHERE point_id = 7");
+                client.query("UPDATE points SET audio_url = './directory/8.mp3' WHERE point_id = 8");
+                client.query("UPDATE points SET audio_url = './directory/9.mp3' WHERE point_id = 9");
+                client.query("UPDATE points SET audio_url = './directory/10.mp3' WHERE point_id = 10");
+
+                client.query("UPDATE points SET audio_url = './directory/11.mp3' WHERE point_id = 11");
+                client.query("UPDATE points SET audio_url = './directory/12.mp3' WHERE point_id = 12");
+                client.query("UPDATE points SET audio_url = './directory/13.mp3' WHERE point_id = 13");
+                client.query("UPDATE points SET audio_url = './directory/14.mp3' WHERE point_id = 14");
+                client.query("UPDATE points SET audio_url = './directory/15.mp3' WHERE point_id = 15");
+
+                client.query("UPDATE points SET audio_url = './directory/16.mp3' WHERE point_id = 16");
+                client.query("UPDATE points SET audio_url = './directory/17.mp3' WHERE point_id = 17");
+                client.query("UPDATE points SET audio_url = './directory/18.mp3' WHERE point_id = 18");
+                client.query("UPDATE points SET audio_url = './directory/19.mp3' WHERE point_id = 19");
+                client.query("UPDATE points SET audio_url = './directory/0.mp3' WHERE point_id = 0");
+            }
+
+            ])
+
+    })
+}
 
 
 function getTourbyId(id) {
