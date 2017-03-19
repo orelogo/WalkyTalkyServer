@@ -60,7 +60,7 @@ yelp.search({ term: 'food', location: 'Vancouver' })
                   var orderNum = 0;
                   dataObj.forEach(function (business) {
 
-                      client.query("INSERT INTO points(point_id, tour_id, name, address, lat, lon, order_in_tour, audio_url, image_url, categories, yelp_rating) VALUES (" + pointID + "," + 1 + ",'" + business['name'] + "','" + business['address'] + "',"  + business['lat'] + "," + business['lon'] + "," + orderNum + ",'" +  business['audioURL'] + "','"  +business['imageUrl'] + "','" + business['categories'] + "'," + business['rating'] + ")");
+                      client.query("INSERT INTO points(point_id, tour_id, name, address, lat, lon, order_in_tour, audio_url, image_url, categories, yelp_rating) VALUES (" + pointID + "," + 1 + ",'" + business['name'] + "','" + business['address'] + "',"  + business['lat'] + "," + business['lon'] + "," + orderNum + ",'" +  business['audioURL'] + "','"  +business['imageUrl'] + "','" + business['categories'] + "'," + business['rating'] + ") ON CONFLICT (point_id) DO NOTHING");
                       pointID++;
                       orderNum++;
                   });
@@ -94,7 +94,7 @@ yelp.search({ term: 'museum', location: 'Vancouver' })
                     var orderNum = 0;
                     dataObj.forEach(function (business) {
 
-                        client.query("INSERT INTO points(point_id, tour_id, name, address, lat, lon, order_in_tour, audio_url, image_url, categories, yelp_rating) VALUES (" + pointID + "," + 2 + ",'" + business['name'] + "','" + business['address'] + "'," + business['lat'] + "," + business['lon'] + "," + orderNum + ",'" + business['audioURL'] + "','" + business['imageUrl'] + "','" + business['categories'] + "'," + business['rating'] + ")");
+                        client.query("INSERT INTO points(point_id, tour_id, name, address, lat, lon, order_in_tour, audio_url, image_url, categories, yelp_rating) VALUES (" + pointID + "," + 2 + ",'" + business['name'] + "','" + business['address'] + "'," + business['lat'] + "," + business['lon'] + "," + orderNum + ",'" + business['audioURL'] + "','" + business['imageUrl'] + "','" + business['categories'] + "'," + business['rating'] + ") ON CONFLICT (point_id) DO NOTHING");
                         pointID++;
                         orderNum++;
                     });
