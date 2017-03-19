@@ -71,13 +71,13 @@ yelp.search({ term: 'food', location: 'Vancouver' })
         console.error(err);
     })
 
-yelp.search({ term: 'art', location: 'Vancouver' })
+yelp.search({ term: 'museum', location: 'Vancouver' })
     .then(function (data) {
-        console.log(data);
+        //console.log(data);
         var dataObj = createArtPoints(data);
-        console.log(dataObj);
+        //console.log(dataObj);
 
-        /*pg.connect(config, function (err, client, done) {
+        pg.connect(config, function (err, client, done) {
 
             var finish = function () {
                 done();
@@ -90,26 +90,53 @@ yelp.search({ term: 'art', location: 'Vancouver' })
             }
             async.waterfall([
                 function (next) {
-                    var pointID = 0;
+                    var pointID = 21;
                     var orderNum = 0;
                     dataObj.forEach(function (business) {
 
-                        client.query("INSERT INTO points(point_id, tour_id, name, address, lat, lon, order_in_tour, audio_url, image_url, categories, yelp_rating) VALUES (" + pointID + "," + 1 + ",'" + business['name'] + "','" + business['address'] + "',"  + business['lat'] + "," + business['lon'] + "," + orderNum + ",'" +  business['audioURL'] + "','"  +business['imageUrl'] + "','" + business['categories'] + "'," + business['rating'] + ")");
+                        client.query("INSERT INTO points(point_id, tour_id, name, address, lat, lon, order_in_tour, audio_url, image_url, categories, yelp_rating) VALUES (" + pointID + "," + 2 + ",'" + business['name'] + "','" + business['address'] + "',"  + business['lat'] + "," + business['lon'] + "," + orderNum + ",'" +  business['audioURL'] + "','"  +business['imageUrl'] + "','" + business['categories'] + "'," + business['rating'] + ")");
                         pointID++;
                         orderNum++;
                     });
+
                 }])
-        })*/
-    })
+            })
+        })
     .catch(function (err) {
         console.error(err);
     })
+getTourbyId(1);
 
 
-function createArtPoints(data) {
-    var resultArray = [];
 
 
+
+function getTourbyId(id) {
+    pg.connect(config, function (err, client, done) {
+        var finish = function () {
+            done();
+            process.exit();
+        };
+
+        if (err) {
+            console.error('could not connect to cockroachdb', err);
+            finish();
+        }
+
+        var query = client.query('SELECT * FROM tours WHERE tour_id = ' + id);
+        var rows = [];
+        query.on('row', function(row, result){
+          result.addRow(row);
+          //  console.log(rows);
+        })
+        query.on('end', function(result){
+         // console.log('done');
+          console.log(result['rows']);
+          return result['rows'];
+        })
+
+
+    });
 
 }
 
@@ -147,6 +174,41 @@ function createFoodPoints(data) {
 
   return resultArray;
 }
+
+function createArtPoints(data) {
+    var resultArray = [];
+
+    var businessArray = data["businesses"];
+    //console.log(businessArray);
+
+    businessArray.forEach(function(business) {
+        //console.log("in businesses");
+        //console.log(business);
+        var pointObj = {}
+        pointObj["tourid"] = "";
+        pointObj["point"] = "";
+        pointObj['rating'] = business['rating'];
+
+        pointObj["name"] = business["name"];
+
+        var location = business["location"];
+        pointObj["address"] = location["address"][0];
+
+        var coords = location["coordinate"];
+        //console.log("coords:" + coords);
+        pointObj['lat'] = coords["latitude"];
+        pointObj['lon'] = coords["longitude"];
+        pointObj['orderInTour'] = 0;
+        pointObj['audioURL'] = "";
+        pointObj['imageUrl'] = business['image_url'];
+        pointObj['categories'] = "art";
+        //console.log(pointObj);
+        resultArray.push(pointObj);
+    })
+
+    return resultArray;
+}
+
 
 function createTables(config) {
 
