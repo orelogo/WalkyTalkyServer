@@ -94,18 +94,21 @@ yelp.search({ term: 'museum', location: 'Vancouver' })
                     var orderNum = 0;
                     dataObj.forEach(function (business) {
 
-                        client.query("INSERT INTO points(point_id, tour_id, name, address, lat, lon, order_in_tour, audio_url, image_url, categories, yelp_rating) VALUES (" + pointID + "," + 2 + ",'" + business['name'] + "','" + business['address'] + "',"  + business['lat'] + "," + business['lon'] + "," + orderNum + ",'" +  business['audioURL'] + "','"  +business['imageUrl'] + "','" + business['categories'] + "'," + business['rating'] + ")");
+                        client.query("INSERT INTO points(point_id, tour_id, name, address, lat, lon, order_in_tour, audio_url, image_url, categories, yelp_rating) VALUES (" + pointID + "," + 2 + ",'" + business['name'] + "','" + business['address'] + "'," + business['lat'] + "," + business['lon'] + "," + orderNum + ",'" + business['audioURL'] + "','" + business['imageUrl'] + "','" + business['categories'] + "'," + business['rating'] + ")");
                         pointID++;
                         orderNum++;
                     });
 
                 }])
-            })
+
         })
+    })
     .catch(function (err) {
         console.error(err);
     })
-getTourbyId(1);
+
+
+getFullTourID(1);
 
 
 
@@ -125,19 +128,56 @@ function getTourbyId(id) {
 
         var query = client.query('SELECT * FROM tours WHERE tour_id = ' + id);
         var rows = [];
-        query.on('row', function(row, result){
-          result.addRow(row);
-          //  console.log(rows);
+        query.on('row', function (row, result) {
+            result.addRow(row);
+            //  console.log(rows);
         })
-        query.on('end', function(result){
-         // console.log('done');
-          console.log(result['rows']);
-          return result['rows'];
+        query.on('end', function (result) {
+             console.log('done');
+            console.log(result['rows']);
+            return result['rows'];
         })
+    })
+}
 
+function getPointbyId(id) {
+    pg.connect(config, function (err, client, done) {
+        var finish = function () {
+            done();
+            process.exit();
+        };
 
-    });
+        if (err) {
+            console.error('could not connect to cockroachdb', err);
+            finish();
+        }
 
+        var query = client.query('SELECT * FROM points WHERE tour_id = ' + id);
+        var rows = [];
+        query.on('row', function (row, result) {
+            result.addRow(row);
+            //  console.log(rows);
+        })
+        query.on('end', function (result) {
+            console.log('done');
+            console.log(result['rows']);
+            return result['rows'];
+        })
+    })
+}
+
+function getFullTourID(id){
+  var tourObj = [];
+    async.waterfall([
+        function (next) {
+            tourObj.concat(getTourbyId(id));
+            var orderNum = 0;
+            next();
+
+        },function(next) {
+          tourObj.concat(getPointbyId(id));
+        }])
+   return tourObj;
 }
 
 
@@ -212,71 +252,71 @@ function createArtPoints(data) {
 
 function createTables(config) {
 
-  pg.connect(config, function (err, client, done) {
-    // Closes communication with the database and exits.
-    var finish = function () {
-      done();
-      process.exit();
-    };
+    pg.connect(config, function (err, client, done) {
+        // Closes communication with the database and exits.
+        var finish = function () {
+            done();
+            process.exit();
+        };
 
-    if (err) {
-      console.error('could not connect to cockroachdb', err);
-      finish();
-    }
-    async.waterfall([
-      function (next) {
-        // Create the "tours" table.
-        client.query("CREATE TABLE IF NOT EXISTS tours (" +
-          "tour_id SERIAL PRIMARY KEY, " +
-          "name STRING, " +
-          "description STRING," +
-          "author STRING," +
-          "date DATE," +
-          "city STRING," +
-          "category STRING," +
-          "rating INT," +
-          "image_url STRING," +
-          "audio_intro_url STRING" +
-        ");", next);
-      },
-      function (next) {
-        // Create the "points" table.
-        client.query("CREATE TABLE IF NOT EXISTS points (" +
-          "point_id SERIAL PRIMARY KEY, " +
-          "tour_id INT REFERENCES tours," +
-          "name STRING, " +
-          "address STRING," +
-          "lat DECIMAL," +
-          "lon DECIMAL," +
-          "order_in_tour INT," +
-          "audio_url STRING," +
-          "image_url STRING," +
-          "categories STRING," +
-          "yelp_rating DECIMAL" +
-        ");", next);
-      },
+        if (err) {
+            console.error('could not connect to cockroachdb', err);
+            finish();
+        }
+        async.waterfall([
+                function (next) {
+                    // Create the "tours" table.
+                    client.query("CREATE TABLE IF NOT EXISTS tours (" +
+                        "tour_id SERIAL PRIMARY KEY, " +
+                        "name STRING, " +
+                        "description STRING," +
+                        "author STRING," +
+                        "date DATE," +
+                        "city STRING," +
+                        "category STRING," +
+                        "rating INT," +
+                        "image_url STRING," +
+                        "audio_intro_url STRING" +
+                        ");", next);
+                },
+                function (next) {
+                    // Create the "points" table.
+                    client.query("CREATE TABLE IF NOT EXISTS points (" +
+                        "point_id SERIAL PRIMARY KEY, " +
+                        "tour_id INT REFERENCES tours," +
+                        "name STRING, " +
+                        "address STRING," +
+                        "lat DECIMAL," +
+                        "lon DECIMAL," +
+                        "order_in_tour INT," +
+                        "audio_url STRING," +
+                        "image_url STRING," +
+                        "categories STRING," +
+                        "yelp_rating DECIMAL" +
+                        ");", next);
+                },
 
-      // function (next) {
-      //   // Insert two rows into the "accounts" table.
-      //   client.query("INSERT INTO tours (id, balance) VALUES (1, 1000), (2, 250);", next);
-      // },
-      // function (results, next) {
-      //   // Print out the balances.
-      //   client.query('SELECT id, balance FROM accounts;', next);
-      // },
-    ],
-    function (err, results) {
-      if (err) {
-        console.error('error inserting into and selecting from accounts', err);
-        finish();
-      }
+                // function (next) {
+                //   // Insert two rows into the "accounts" table.
+                //   client.query("INSERT INTO tours (id, balance) VALUES (1, 1000), (2, 250);", next);
+                // },
+                // function (results, next) {
+                //   // Print out the balances.
+                //   client.query('SELECT id, balance FROM accounts;', next);
+                // },
+            ],
+            function (err, results) {
+                if (err) {
+                    console.error('error inserting into and selecting from accounts', err);
+                    finish();
+                }
 
-      console.log('Results:');
-      results.rows.forEach(function (row) {
-        console.log(row);
-      });
+                console.log('Results:');
+                results.rows.forEach(function (row) {
+                    console.log(row);
+                });
 
-      finish();
+                finish();
+            });
     });
-  });
 }
