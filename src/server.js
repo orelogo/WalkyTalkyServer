@@ -19,9 +19,6 @@ app.get('/', function (req, res) {
 app.listen(port);
 console.log('server on');
 
-
-var connectionString = process.nev.DATABASE_URL || 'podre'
-
 var config = {
   user: 'maxroach',
   host: 'localhost',
