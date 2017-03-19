@@ -20,7 +20,7 @@ app.listen(port);
 console.log('server on');
 
 var config = {
-  user: 'maxroach',
+  user: 'walkytalky',
   host: 'localhost',
   database: 'bank',
   port: 26257
@@ -52,7 +52,7 @@ function createTables(config) {
           "date DATE," +
           "city STRING," +
           "category STRING," +
-          "rating INT(1, 5)," +
+          "rating INT," +
           "image_url STRING," +
           "audio_intro_url STRING" +
         ");", next);
@@ -61,11 +61,11 @@ function createTables(config) {
         // Create the "points" table.
         client.query("CREATE TABLE IF NOT EXISTS points (" +
           "point_id SERIAL PRIMARY KEY, " +
-          "tour_id INT REFERENCES tours (tour_id)," +
+          "tour_id INT REFERENCES tours," +
           "name STRING, " +
           "address STRING," +
-          "lat DOUBLE," +
-          "lon DOUBLE," +
+          "lat DECIMAL," +
+          "lon DECIMAL," +
           "order_in_tour INT," +
           "audio_url STRING," +
           "image_url STRING," +
