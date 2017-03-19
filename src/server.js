@@ -22,6 +22,7 @@ var tour = require('./routes/tour');
 // app.use(express.static('public'));
 app.use('/all-tours', allTours);
 app.use('/tour', tour);
+//app.use('/tourHandler', tourHandler);
 
 app.listen(port);
 console.log('server on');
@@ -111,12 +112,10 @@ yelp.search({ term: 'museum', location: 'Vancouver' })
     })
 
 
-app.get('/', function (req, res) {
-    res.send(getFullTourID(1));
-});
+/*app.get('/', function (req, res) {
+    res.send(getFullTourID(req.body));
+});*/
 
-getFullTourID(1);
-setFoodAudio();
 
 
 function setFoodAudio(){
@@ -165,7 +164,7 @@ function setFoodAudio(){
 }
 
 
-function getTourbyId(id) {
+/*function getTourbyId(id) {
     pg.connect(config, function (err, client, done) {
         var finish = function () {
             done();
@@ -229,7 +228,7 @@ function getFullTourID(id){
           tourObj.concat(getPointbyId(id));
         }])
    return tourObj;
-}
+}*/
 
 
 function createFoodPoints(data) {
